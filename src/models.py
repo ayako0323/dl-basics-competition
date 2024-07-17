@@ -3,6 +3,46 @@ import torch.nn as nn
 import torch.nn.functional as F
 from einops.layers.torch import Rearrange
 
+class MyClassifier(nn.Module):
+    def __init__(
+        self,
+        num_classes: int,
+        seq_len: int,
+        in_channels: int,
+        hid_dim: int = 128
+    ) -> None:
+        super().__init__()
+
+        self.blocks = nn.Sequential(
+            ConvBlock(in_channels, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+            ConvBlock(hid_dim, hid_dim),
+        )
+
+        self.head = nn.Sequential(
+            nn.AdaptiveAvgPool1d(1),
+            Rearrange("b d 1 -> b d"),
+            nn.Linear(hid_dim, num_classes),
+        )
+
+    def forward(self, X: torch.Tensor) -> torch.Tensor:
+        """_summary_
+        Args:
+            X ( b, c, t ): _description_
+        Returns:
+            X ( b, num_classes ): _description_
+        """
+        X = self.blocks(X)
+
+        return self.head(X)
+
 
 class BasicConvClassifier(nn.Module):
     def __init__(

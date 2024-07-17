@@ -4,6 +4,7 @@ import torch
 from typing import Tuple
 from termcolor import cprint
 
+from sklearn import preprocessing
 
 class ThingsMEGDataset(torch.utils.data.Dataset):
     def __init__(self, split: str, data_dir: str = "data") -> None:
@@ -24,10 +25,14 @@ class ThingsMEGDataset(torch.utils.data.Dataset):
         return len(self.X)
 
     def __getitem__(self, i):
+
+        scaler = preprocessing.StandardScaler()
+        X = scaler.fit_transform(self.X[i])
+
         if hasattr(self, "y"):
-            return self.X[i], self.y[i], self.subject_idxs[i]
+            return X, self.y[i], self.subject_idxs[i]
         else:
-            return self.X[i], self.subject_idxs[i]
+            return X, self.subject_idxs[i]
         
     @property
     def num_channels(self) -> int:

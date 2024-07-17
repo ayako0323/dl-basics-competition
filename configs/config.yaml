@@ -1,6 +1,9 @@
 batch_size: 128
-epochs: 80
+epochs: 100
 lr: 0.001
+p_drop: 0.15
+l1_lambda: 5e-4
+l2_lambda: 0.5
 
 device: cuda:0
 num_workers: 4
@@ -10,4 +13,4 @@ use_wandb: False
 data_dir: data
 
 # Evaluation
-model_path: 
+model_path: /home/ayakoy/py-file/dl-basics-competition/outputs/2024-07-17/15-27-53/model_best.pt
